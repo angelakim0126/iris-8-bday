@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Iris's Pokémon Party</title>
+<meta name="description" content="You're invited to Iris's 8th birthday Pokémon party! Tap to RSVP.">
+<meta property="og:title" content="Iris's 8th Birthday Pokémon Party">
+<meta property="og:description" content="Sunday, December 6 · 3:15–5:30 PM · Pump It Up Lake Forest. Tap to RSVP!">
+<meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800;900&family=Press+Start+2P&display=swap">
+<style>
+/* Layout: one centered column like a trainer's handheld screen — sky hero with the ball, then dialogue, Pokédex card, RSVP, roster. Single committed daytime look. */
+:root{
+  --sky:#7cc8ff; --sky-deep:#3d8fe0; --grass:#4fb553; --grass-deep:#2f8a3c;
+  --red:#e3350d; --red-deep:#a8240a; --yellow:#ffcb05; --ink:#1e2433; --ink-soft:#4a5368;
+  --paper:#ffffff; --paper-2:#f2f6fb; --line:#d5deea; --bg:#eaf4ff;
+  --display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pixel:"Press Start 2P","Courier New",monospace;
+  color-scheme:light;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:6px}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+.pix{font-family:var(--pixel);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--sky-deep) 0%,var(--sky) 70%);color:#fff;padding-block:28px 0}
+.hero .wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.85;z-index:1;animation:drift 38s linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud.c1{width:110px;height:30px;top:40px;left:-120px}
+.cloud.c1::before{width:50px;height:50px;top:-24px;left:18px}.cloud.c1::after{width:36px;height:36px;top:-14px;left:58px}
+.cloud.c2{width:80px;height:22px;top:120px;left:-90px;animation-duration:52s;animation-delay:-20s;opacity:.7}
+.cloud.c2::before{width:36px;height:36px;top:-18px;left:14px}.cloud.c2::after{width:26px;height:26px;top:-10px;left:42px}
+@keyframes drift{to{transform:translateX(calc(100vw + 260px))}}
+.eyebrow{background:var(--ink);color:var(--yellow);padding:8px 12px;border-radius:6px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.hero h1{font-size:clamp(40px,10vw,72px);line-height:.95;color:var(--yellow);-webkit-text-stroke:2px var(--sky-deep);paint-order:stroke fill;text-shadow:0 5px 0 var(--sky-deep),0 7px 0 rgba(0,0,0,.18)}
+.hero h1 small{display:block;font-size:.48em;color:#fff;-webkit-text-stroke:0;text-shadow:0 3px 0 rgba(0,0,0,.18);margin-top:6px}
+
+.stage{position:relative;width:200px;height:210px;margin-top:26px}
+.hero h1{position:relative;z-index:5}
+.ballbtn{all:unset;cursor:pointer;position:absolute;left:20px;top:10px;width:160px;height:160px;border-radius:50%;animation:wobble 2.6s ease-in-out infinite;transform-origin:50% 90%}
+.ballbtn:focus-visible{outline:4px solid var(--yellow);outline-offset:6px}
+.half{position:absolute;left:0;width:160px;height:80px;border:6px solid var(--ink);transition:transform .55s cubic-bezier(.3,1.6,.5,1)}
+.half.top{top:0;background:radial-gradient(circle at 30% 30%,#ff7a5c 0 12%,var(--red) 13% 70%,var(--red-deep) 100%);border-radius:80px 80px 0 0;border-bottom-width:4px;transform-origin:10% 100%}
+.half.bot{bottom:0;background:radial-gradient(circle at 40% 0%,#fff 0 60%,#d9e1ec 100%);border-radius:0 0 80px 80px;border-top-width:4px}
+.knob{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:#fff;border:6px solid var(--ink);box-shadow:inset 0 0 0 5px #fff,inset 0 0 0 8px #c8d2e0;z-index:3;transition:transform .4s}
+.ballbtn:hover .knob{box-shadow:inset 0 0 0 5px #fff,inset 0 0 0 8px var(--yellow)}
+.glow{position:absolute;left:50%;top:45%;width:20px;height:20px;margin:-10px;border-radius:50%;background:#fff;opacity:0;z-index:1;pointer-events:none}
+.mascot{position:absolute;z-index:4;pointer-events:none;filter:drop-shadow(0 5px 0 rgba(0,0,0,.14));transform-origin:50% 100%}
+.mascot.m-dino{width:140px;left:-130px;top:-14px;animation:hover 3.2s ease-in-out infinite}
+.mascot.m-fox{width:96px;left:-72px;top:112px;animation:hop 2.2s ease-in-out infinite .8s}
+.mascot.m-kitten{width:118px;right:-112px;top:62px;animation:hop 2.4s ease-in-out infinite}
+.mascot.m-cherry{width:86px;right:-70px;top:-16px;animation:hop 2s ease-in-out infinite .4s}
+@keyframes hover{50%{transform:translateY(-10px) rotate(-3deg)}}
+@keyframes hop{0%,60%,100%{transform:none}70%{transform:translateY(-14px)}80%{transform:none}}
+.opened .mascot{animation:popout .7s cubic-bezier(.3,1.6,.5,1) both}
+.opened .m-kitten{animation-delay:.12s}.opened .m-fox{animation-delay:.18s}.opened .m-cherry{animation-delay:.24s}
+@keyframes popout{0%{transform:translate(var(--fx,0),40px) scale(.1);opacity:0}100%{transform:none;opacity:1}}
+.m-dino{--fx:110px}.m-fox{--fx:60px}.m-kitten{--fx:-100px}.m-cherry{--fx:-60px}
+@media (max-width:520px){.mascot.m-dino{width:104px;left:-86px;top:-4px}.mascot.m-fox{width:70px;left:-50px;top:122px}.mascot.m-kitten{width:90px;right:-78px;top:76px}.mascot.m-cherry{width:64px;right:-44px;top:-8px}}
+.shadow{position:absolute;left:50%;bottom:0;width:120px;height:16px;margin-left:-60px;border-radius:50%;background:rgba(0,0,0,.18)}
+.opened .ballbtn{animation:none}
+.opened .half.top{transform:translate(-4px,-8px) rotate(-30deg)}
+.opened .knob{transform:translateY(-6px) scale(.9)}
+.opened .glow{animation:flash .9s ease-out forwards}
+@keyframes flash{0%{opacity:1;transform:scale(1)}60%{opacity:.9;transform:scale(14)}100%{opacity:0;transform:scale(20)}}
+@keyframes wobble{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-12deg)}84%{transform:rotate(10deg)}92%{transform:rotate(-5deg)}}
+.tap{color:var(--ink);background:var(--yellow);padding:8px 12px;border-radius:999px;box-shadow:0 3px 0 #c79c00}
+.grass{height:34px;margin-top:18px;background:
+  linear-gradient(135deg,var(--grass) 25%,transparent 25.5%) -12px 0/24px 24px repeat-x,
+  linear-gradient(225deg,var(--grass) 25%,transparent 25.5%) -12px 0/24px 24px repeat-x,
+  linear-gradient(var(--grass),var(--grass)) 0 12px/100% 100% no-repeat;position:relative;z-index:2}
+
+/* SECTIONS */
+main{display:flex;flex-direction:column;gap:26px;padding-block:22px 40px;background:linear-gradient(var(--grass) 0 0) top/100% 0 no-repeat}
+.dialog{background:var(--paper);border:4px solid var(--ink);border-radius:14px;box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 7px #8fa2bf,0 6px 0 rgba(30,36,51,.18);padding:20px 22px 26px;position:relative}
+.dialog .speaker{position:absolute;top:-14px;left:18px;background:var(--red);color:#fff;padding:6px 10px;border:3px solid var(--ink);border-radius:8px}
+.dialog p{font-family:var(--pixel);font-size:12px;line-height:2.1;margin:0;min-height:4.2em;white-space:pre-line}
+.dialog .more{position:absolute;right:16px;bottom:8px;font-family:var(--pixel);font-size:12px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.dex{background:var(--red);border:4px solid var(--ink);border-radius:20px 20px 20px 60px;padding:18px;color:#fff;box-shadow:0 8px 0 var(--red-deep)}
+.dex-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lens{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#bff2ff 0 15%,#2fb6ff 16% 60%,#0d6fb8 100%);border:4px solid #fff;box-shadow:0 0 0 3px var(--ink)}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
+.dex-top .dot:nth-child(2){background:#ff6b6b}.dex-top .dot:nth-child(3){background:var(--yellow)}.dex-top .dot:nth-child(4){background:#5fd068}
+.dex-top .pix{margin-left:auto;opacity:.9}
+.screen{background:#dff3e4;color:#183a22;border:4px solid var(--ink);border-radius:10px;padding:16px 18px;display:grid;gap:14px}
+.screen-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.screen-head h2{font-size:30px;color:#183a22}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.type{display:inline-flex;align-items:center;gap:6px;font-family:var(--pixel);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:6px 9px;border-radius:999px;border:2px solid rgba(0,0,0,.25);text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fact{background:#c8e8d0;border-radius:8px;padding:10px 12px;min-width:0}
+.fact .pix{font-size:8px;color:#2d5c3a;display:block;margin-bottom:6px}
+.fact b{display:block;font-size:17px;font-weight:900;line-height:1.25;overflow-wrap:anywhere}
+.fact span{font-size:14px;color:#2d5c3a;overflow-wrap:anywhere}
+.fact a{color:#14532d;font-weight:800}
+.wide{grid-column:1/-1}
+.count{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#183a22;color:#bff5c8;border-radius:8px;padding:12px 14px}
+.count .n{font-family:var(--pixel);font-size:20px;color:var(--yellow);font-variant-numeric:tabular-nums}
+.hp{flex:1 1 160px;height:12px;border-radius:999px;background:#0e2415;border:2px solid #bff5c8;overflow:hidden}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,#5fd068,var(--yellow));width:0;transition:width 1s}
+.dex-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:3px solid var(--ink);border-radius:12px;padding:10px 16px;font-weight:900;font-size:15px;text-decoration:none;background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.primary{background:var(--yellow)}
+.btn.red{background:var(--red);color:#fff}
+.btn.small{padding:6px 10px;font-size:13px;border-width:2px;box-shadow:0 3px 0 var(--ink);border-radius:9px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+
+.panel{background:var(--paper);border:3px solid var(--ink);border-radius:18px;padding:20px;box-shadow:0 6px 0 rgba(30,36,51,.16)}
+.panel h2{font-size:30px;color:var(--ink)}
+.panel .sub{color:var(--ink-soft);margin:4px 0 16px;max-width:60ch}
+form{display:grid;gap:16px}
+label.f{display:grid;gap:6px;font-weight:800;font-size:14px}
+input[type=text],input[type=date],input[type=time],input[type=number],textarea{width:100%;border:2px solid var(--line);background:var(--paper-2);border-radius:10px;padding:10px 12px;font-weight:700}
+input:focus,textarea:focus{border-color:var(--sky-deep);outline:none;background:#fff}
+textarea{resize:vertical;min-height:72px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.choice{cursor:pointer;border:3px solid var(--line);background:var(--paper-2);border-radius:14px;padding:12px 8px;text-align:center;font-weight:900;display:grid;gap:6px;justify-items:center}
+.choice small{font-weight:700;color:var(--ink-soft);font-size:12px}
+.choice .mini{width:28px;height:28px}
+.choice[aria-pressed=true]{border-color:var(--ink);background:#fff;box-shadow:0 4px 0 var(--ink)}
+.choice[data-v=yes][aria-pressed=true]{background:#e4f8e6}
+.choice[data-v=maybe][aria-pressed=true]{background:#fff6cf}
+.choice[data-v=no][aria-pressed=true]{background:#ffe3dc}
+.types{display:flex;flex-wrap:wrap;gap:8px}
+.types button{cursor:pointer;opacity:.55;transform:scale(.96);transition:all .15s}
+.types button[aria-pressed=true]{opacity:1;transform:scale(1.06);box-shadow:0 3px 0 var(--ink);border-color:var(--ink)}
+.legend{font-weight:800;font-size:14px;margin-bottom:6px;display:block}
+.note{font-size:14px;color:var(--ink-soft)}
+.alert{border:2px dashed var(--red);background:#fff1ed;color:var(--red-deep);padding:12px 14px;border-radius:12px;font-weight:700}
+.ok{border:2px solid var(--grass-deep);background:#eafbe9;color:#1e5a29;padding:10px 14px;border-radius:12px;font-weight:800}
+
+.tally{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.tally div{border-radius:12px;padding:10px 12px;border:2px solid var(--line);background:var(--paper-2)}
+.tally b{display:block;font-family:var(--pixel);font-size:18px;font-variant-numeric:tabular-nums;margin:4px 0}
+.tally small{font-weight:700;color:var(--ink-soft);font-size:12px}
+.group{margin-top:14px}
+.group h3{font-size:20px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tc{border:3px solid var(--ink);border-radius:14px;padding:12px;background:#fff;position:relative;overflow:hidden;min-width:0;display:grid;gap:6px;align-content:start}
+.tc::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--tc,var(--line))}
+.tc .nm{font-weight:900;font-size:16px;overflow-wrap:anywhere;padding-top:2px}
+.tc .meta{font-size:13px;color:var(--ink-soft);font-weight:700}
+.tc .msg{font-size:14px;background:var(--paper-2);border-radius:8px;padding:6px 8px;overflow-wrap:anywhere}
+.tc .you{position:absolute;top:10px;right:10px;font-family:var(--pixel);font-size:8px;background:var(--ink);color:var(--yellow);padding:4px 6px;border-radius:4px}
+.tc.dim{opacity:.75}
+.partners{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:4px}
+.partners figure{margin:0;background:#fff;border:2px solid #9fd1ad;border-radius:12px;padding:8px 6px 4px;text-align:center;min-width:0;display:grid;justify-items:center;gap:2px}
+.partners img,.partners canvas{width:100%;max-width:96px;aspect-ratio:1;object-fit:contain;display:block}
+.partners figcaption{font-family:var(--pixel);font-size:8px;color:#2d5c3a;padding:4px 0;overflow-wrap:anywhere}
+.pedit{display:grid;gap:10px}
+.prow{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px}
+.prow .thumb{width:56px;height:56px;object-fit:contain;background:var(--paper-2);border-radius:8px}
+.prow .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.prow input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.hosth{font-size:22px;margin-top:22px}
+@media (max-width:520px){.partners{grid-template-columns:repeat(2,minmax(0,1fr))}.prow{grid-template-columns:48px minmax(0,1fr)}.prow .acts{grid-column:1/-1;justify-content:flex-start}}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--ink-soft);font-weight:700}
+
+.host{border-color:var(--sky-deep);background:#f3f9ff}
+.host .tag{display:inline-block;background:var(--sky-deep);color:#fff;margin-bottom:8px;padding:6px 8px;border-radius:6px}
+
+footer{background:var(--ink);color:#c9d3e6;padding-block:22px 28px;font-size:13px}
+footer .wrap{display:grid;gap:8px}
+footer b{color:var(--yellow)}
+
+/* CATCH OVERLAY */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(15,24,48,.72);display:grid;place-items:center;padding:24px}
+.catch{display:grid;justify-items:center;gap:18px;text-align:center}
+.cball{position:relative;width:110px;height:110px;border-radius:50%;border:5px solid var(--ink);overflow:hidden;background:linear-gradient(var(--red) 0 47%,var(--ink) 47% 53%,#fff 53%)}
+.cball::after{content:"";position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px;border-radius:50%;background:#fff;border:5px solid var(--ink)}
+.cball.drop{animation:drop .6s cubic-bezier(.3,1.4,.6,1)}
+.cball.shake{animation:shake 1.8s ease-in-out}
+.cball.click::after{background:var(--yellow);transition:background .2s}
+@keyframes drop{from{transform:translateY(-60vh) rotate(-300deg)}to{transform:none}}
+@keyframes shake{0%,30%,60%,100%{transform:rotate(0)}10%,40%,70%{transform:rotate(-22deg)}20%,50%,80%{transform:rotate(22deg)}}
+.catch .box{background:#fff;border:4px solid var(--ink);border-radius:12px;padding:16px 18px;max-width:420px;font-family:var(--pixel);font-size:12px;line-height:2;color:var(--ink);min-height:5em}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60;width:100%;height:100%}
+
+@media (max-width:520px){
+  .facts,.row{grid-template-columns:1fr}
+  .tally b{font-size:14px}
+  .dialog p{font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<header class="hero" id="top">
+  <div class="cloud c1"></div><div class="cloud c2"></div>
+  <div class="wrap">
+    <span class="eyebrow pix">A wild invitation appeared!</span>
+    <h1 id="heroTitle">Iris's Birthday<small id="heroSub">Pokémon Party</small></h1>
+    <div class="stage" id="stage">
+      <div class="shadow"></div>
+      <button class="ballbtn" id="ball" aria-label="Open the Poké Ball for a birthday surprise">
+        <span class="glow"></span>
+        <span class="half top"></span>
+        <span class="half bot"></span>
+        <span class="knob"></span>
+      </button>
+    </div>
+    <span class="tap pix" id="tapHint">Tap the ball!</span>
+  </div>
+  <div class="grass"></div>
+</header>
+
+<main class="wrap">
+  <section class="dialog" aria-live="polite">
+    <span class="speaker pix" id="speaker">Professor Party</span>
+    <p id="dialogText"></p>
+    <span class="more" aria-hidden="true">▼</span>
+  </section>
+
+  <section class="dex" aria-labelledby="dexName">
+    <div class="dex-top"><span class="lens"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="pix">Party-dex</span></div>
+    <div class="screen">
+      <div class="screen-head">
+        <span class="pix" id="dexNo">No. 007</span>
+        <h2 id="dexName">Iris</h2>
+        
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="pix">When</span><b id="fWhen">Date coming soon</b><span id="fTime"></span></div>
+        <div class="fact"><span class="pix">Where</span><b id="fPlace">Location coming soon</b><span id="fAddr"></span></div>
+        <div class="fact"><span class="pix">Hosted by</span><b id="fHost">Iris's family</b><span id="fRsvpBy"></span></div>
+        <div class="fact"><span class="pix">Trainer notes</span><span id="fNotes">Wear your favorite type colors. Party games, cake, and a few surprises.</span></div>
+        <div class="fact wide"><span class="pix">Favorite partners</span><div class="partners" id="partners"></div></div>
+      </div>
+      <div class="count" id="countBox">
+        <span class="pix">Days to party</span>
+        <span class="hp" aria-hidden="true"><i id="hpBar"></i></span>
+        <span class="n" id="countN">--</span>
+      </div>
+    </div>
+    <div class="dex-actions">
+      <a class="btn primary" href="#rsvp">RSVP now</a>
+      <a class="btn" id="calLink" href="#" target="_blank" rel="noopener" hidden>Add to Google Calendar</a>
+      <a class="btn" id="mapLink" href="#" target="_blank" rel="noopener" hidden>Open map</a>
+    </div>
+  </section>
+
+  <section class="panel host" id="hostPanel" hidden>
+    <span class="tag pix">Host only</span>
+    <h2>Party details</h2>
+    <p class="sub" id="hostSub">You are in host mode on this device. Changes show for guests within a minute.</p>
+    <form id="detailsForm">
+      <div class="row">
+        <label class="f">Birthday trainer<input type="text" id="dName" maxlength="40" value="Iris"></label>
+        <label class="f">Turning (age)<input type="number" id="dAge" min="1" max="120" placeholder="7"></label>
+      </div>
+      <div class="row">
+        <label class="f">Party date<input type="date" id="dDate"></label>
+        <label class="f">RSVP by<input type="date" id="dRsvpBy"></label>
+      </div>
+      <div class="row">
+        <label class="f">Starts<input type="time" id="dStart"></label>
+        <label class="f">Ends<input type="time" id="dEnd"></label>
+      </div>
+      <label class="f">Place name<input type="text" id="dPlace" maxlength="80" placeholder="e.g. Maple Park, Pavilion B"></label>
+      <label class="f">Address<input type="text" id="dAddr" maxlength="160" placeholder="Street, city"></label>
+      <label class="f">Hosted by<input type="text" id="dHost" maxlength="80" placeholder="e.g. Angela & family"></label>
+      <label class="f">Invitation message<textarea id="dMsg" maxlength="400" placeholder="Shown in the dialogue box"></textarea></label>
+      <label class="f">Trainer notes (what to bring, parking, gifts)<textarea id="dNotes" maxlength="400"></textarea></label>
+      <div><button class="btn primary" type="submit" id="dSave">Save details</button> <span class="note" id="dStatus" role="status"></span></div>
+    </form>
+  </section>
+
+  <section class="panel" id="rsvp" aria-labelledby="rsvpH">
+    <h2 id="rsvpH">Join the party</h2>
+    <p class="sub" id="rsvpSub">Pick your answer. You can come back and change it any time.</p>
+    <div id="rsvpGate" class="alert" hidden></div>
+    <p class="note" id="rsvpBy2" hidden></p>
+    <p class="note">Siblings are welcome. Just count them in the kids number so we can plan.</p>
+    <form id="rsvpForm">
+      <label class="f">Trainer name (you or your family)<input type="text" id="rName" maxlength="60" placeholder="e.g. Maya & the Parks" required></label>
+      <div>
+        <span class="legend" id="stLegend">Will you join?</span>
+        <div class="choices" role="group" aria-labelledby="stLegend">
+          <button type="button" class="choice" data-v="yes" aria-pressed="false"><canvas class="mini" width="56" height="56" data-ball="#e3350d"></canvas>I'm in!<small>Count me in</small></button>
+          <button type="button" class="choice" data-v="maybe" aria-pressed="false"><canvas class="mini" width="56" height="56" data-ball="#3d7dca"></canvas>Maybe<small>Still deciding</small></button>
+          <button type="button" class="choice" data-v="no" aria-pressed="false"><canvas class="mini" width="56" height="56" data-ball="#8a93a6"></canvas>Can't go<small>Next time</small></button>
+        </div>
+      </div>
+      <div class="row" id="countsRow">
+        <label class="f">Grown-ups<input type="number" id="rAdults" min="0" max="20" value="1"></label>
+        <label class="f">Kids (include siblings)<input type="number" id="rKids" min="0" max="20" value="1"></label>
+      </div>
+      <label class="f">Message for Iris (optional)<textarea id="rNote" maxlength="200" placeholder="Happy birthday, Iris!"></textarea></label>
+      <p class="note">Your RSVP is remembered on this device, so you can come back and change it. On a different phone? Just send it again and the host will tidy up.</p>
+      <div><button class="btn red" type="submit" id="rSubmit">Throw the ball! (Send RSVP)</button></div>
+      <div id="rStatus" role="status"></div>
+    </form>
+  </section>
+
+  <section class="panel" aria-labelledby="rosterH">
+    <h2 id="rosterH">Party roster</h2>
+    <p class="sub">Everyone invited can see who's coming.</p>
+    <div class="tally">
+      <div><span class="pix">Going</span><b id="tGo">0</b><small id="tGoSub">0 grown-ups · 0 kids</small></div>
+      <div><span class="pix">Maybe</span><b id="tMaybe">0</b><small>families</small></div>
+      <div><span class="pix">Can't go</span><b id="tNo">0</b><small>families</small></div>
+    </div>
+    <div id="roster"><div class="empty" id="rosterEmpty">Connecting to the guest list…</div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b>Unofficial fan-made invitation.</b> Made for a private family birthday party and shared only with friends. Not for commercial use, not for sale.</div>
+    <div>Pokémon and Poké Ball are trademarks of Nintendo, Creatures Inc. and GAME FREAK inc. This page is not affiliated with, sponsored by, or endorsed by them.</div>
+  </div>
+</footer>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="overlay" id="overlay" hidden>
+  <div class="catch">
+    <div class="cball" id="cball"></div>
+    <div class="box" id="catchText"></div>
+    <button class="btn primary" id="catchClose">Continue</button>
+  </div>
+</div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TYPES = [
+  ['fire','Fire','#f08030'],['water','Water','#6890f0'],['grass','Grass','#78c850'],
+  ['electric','Electric','#e0b400'],['psychic','Psychic','#f85888'],['fairy','Fairy','#ee99ac'],
+  ['ice','Ice','#62c6c6'],['dragon','Dragon','#7038f8'],['rock','Rock','#b8a038'],['ghost','Ghost','#705898']
+];
+const TYPE = Object.fromEntries(TYPES.map(t => [t[0], t]));
+const DEFAULTS = { name:'Iris', age:'8', date:'2026-12-06', start:'15:15', end:'17:30', place:'Pump It Up Lake Forest', address:'26242 Dimension Dr, Lake Forest, CA 92630', host:'Angela Kim & Jaeho Lee', rsvpBy:'2026-11-29', message:"Iris is turning 8! \u26a1\nJoin us at Pump It Up for bouncing fun, followed by pizza, wings, and cake. Gotta bounce 'em all!", notes:"Don't forget socks! Please RSVP so we can plan for every trainer. Hope to see you there!" };
+let details = { ...DEFAULTS };
+const API = String((window.IRIS_CONFIG || {}).apiUrl || '').trim();
+let uid = null, isOwner = false, hostKey = '', me = null, loaded = false;
+let rsvps = [];        // [{id, ...data}]
+let mine = null;       // my existing rsvp data
+let form = { status:'yes', type:'fire' };
+let opened = false;
+
+/* ---------- helpers ---------- */
+const str = (v, n) => (typeof v === 'string' ? v : '').slice(0, n);
+const int = (v, lo, hi) => { const x = Math.round(Number(v)); return Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : lo; };
+function el(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function parseDate(d){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d||''); return m ? new Date(+m[1], +m[2]-1, +m[3]) : null; }
+function fmtDate(d, opts){ const x = parseDate(d); return x ? x.toLocaleDateString(undefined, opts || { weekday:'long', month:'long', day:'numeric', year:'numeric' }) : ''; }
+function fmtTime(t){ const m = /^(\d{2}):(\d{2})$/.exec(t||''); if(!m) return ''; const d = new Date(2000,0,1,+m[1],+m[2]); return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); }
+function clean(d){
+  const o = {};
+  for (const k of Object.keys(DEFAULTS)) o[k] = str(d && d[k], k==='message'||k==='notes' ? 400 : 160) || DEFAULTS[k];
+  if (!o.name) o.name = 'Iris';
+  return o;
+}
+function defaultMessage(){
+  const n = details.name || 'Iris';
+  return details.age ? `${n} is turning ${details.age}!\nTrainers, assemble for games, cake, and very serious battles.`
+                     : `${n} is having a birthday!\nTrainers, assemble for games, cake, and very serious battles.`;
+}
+
+/* ---------- render details ---------- */
+function renderDetails(){
+  const d = details, n = d.name || 'Iris';
+  $('heroTitle').firstChild.nodeValue = `${n}'s ${d.age ? d.age + 'th ' : ''}Birthday`.replace(/(\d+)th /, (m,a)=> a + ordinal(+a) + ' ');
+  $('dexName').textContent = n;
+  $('dexNo').textContent = 'No. ' + String(d.age || 7).padStart(3,'0');
+  $('fWhen').textContent = fmtDate(d.date) || 'Date coming soon';
+  $('fTime').textContent = [fmtTime(d.start), fmtTime(d.end)].filter(Boolean).join(' – ');
+  $('fPlace').textContent = d.place || (d.address ? d.address : 'Location coming soon');
+  $('fAddr').textContent = d.place ? d.address : '';
+  $('fHost').textContent = d.host || `${n}'s family`;
+  $('fRsvpBy').textContent = d.rsvpBy ? 'Please RSVP by ' + fmtDate(d.rsvpBy, { weekday:'short', month:'short', day:'numeric' }) : '';
+  const rb = parseDate(d.rsvpBy), t0 = new Date(); t0.setHours(0,0,0,0);
+  const rbEl = $('rsvpBy2');
+  if (rb){
+    const past = rb < t0;
+    rbEl.className = past ? 'ok' : 'note';
+    rbEl.textContent = past ? 'The RSVP date has passed, but you can still reply or change your answer.'
+      : `Please reply by ${fmtDate(d.rsvpBy, { weekday:'long', month:'long', day:'numeric' })}. Late replies are still welcome.`;
+    rbEl.hidden = false;
+  } else rbEl.hidden = true;
+  $('fNotes').textContent = d.notes || 'Wear your favorite type colors. Party games, cake, and a few surprises.';
+  document.querySelector('label[for=rNote], #rNote') && ($('rNote').placeholder = `Happy birthday, ${n}!`);
+  $('rNote').closest('label').firstChild.nodeValue = `Message for ${n} (optional)`;
+  if (!opened) $('dialogText').textContent = d.message || defaultMessage();
+
+  // countdown
+  const pd = parseDate(d.date);
+  if (pd){
+    const today = new Date(); today.setHours(0,0,0,0);
+    const days = Math.round((pd - today) / 864e5);
+    $('countN').textContent = days > 0 ? days : days === 0 ? 'TODAY!' : 'Done';
+    $('hpBar').style.width = Math.max(4, Math.min(100, 100 - days * 100 / 30)) + '%';
+  } else { $('countN').textContent = '--'; $('hpBar').style.width = '0'; }
+
+  // links
+  if (pd){
+    const ymd = d.date.replace(/-/g,'');
+    let dates;
+    if (d.start){
+      const s = ymd + 'T' + d.start.replace(':','') + '00';
+      const e = ymd + 'T' + (d.end || addHour(d.start)).replace(':','') + '00';
+      dates = s + '/' + e;
+    } else {
+      const nx = new Date(pd); nx.setDate(nx.getDate()+1);
+      dates = ymd + '/' + nx.getFullYear() + String(nx.getMonth()+1).padStart(2,'0') + String(nx.getDate()).padStart(2,'0');
+    }
+    const q = new URLSearchParams({ action:'TEMPLATE', text:`${n}'s Birthday Party`, dates,
+      location:[d.place, d.address].filter(Boolean).join(', '), details:'Pokémon birthday party! Hosted by ' + (d.host || `${n}'s family`), ctz:'America/Los_Angeles' });
+    $('calLink').href = 'https://calendar.google.com/calendar/render?' + q.toString();
+    $('calLink').hidden = false;
+  } else $('calLink').hidden = true;
+  const loc = [d.place, d.address].filter(Boolean).join(', ');
+  if (loc){ $('mapLink').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc); $('mapLink').hidden = false; }
+  else $('mapLink').hidden = true;
+
+  if (isOwner) fillHostForm();
+}
+
+/* ---------- favorite partners (pictures uploaded by the host) ---------- */
+const DEFAULT_PARTNERS = ['Torracat','Cherubi','Eevee','Amaura'].map(name => ({ name, img:'' }));
+let partners = DEFAULT_PARTNERS;
+const okId = v => (typeof v === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(v)) ? v : '';
+function cleanPartners(d){
+  const l = Array.isArray(d && d.list) ? d.list.slice(0, 6) : [];
+  const o = l.map(p => ({ name: str(p && p.name, 30).trim(), img: okId(p && p.img) })).filter(p => p.name);
+  return o.length ? o : DEFAULT_PARTNERS;
+}
+function ballCanvas(size){ const c = document.createElement('canvas'); c.width = c.height = size; drawBall(c.getContext('2d'), size/2, size/2, size*0.4, '#e3350d'); return c; }
+/* Original party mascots (hand-drawn SVG), one nodding to each of Iris's favorites */
+const K = '#1e2433';
+const ART = {
+kitten: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M84 96 C104 92 108 70 98 52" fill="none" stroke-width="7"/><path d="M84 96 C104 92 108 70 98 52" fill="none" stroke="#3a3240" stroke-width="3.5"/>
+<path d="M98 54 C88 44 96 32 100 24 C102 32 112 36 108 46 C106 52 102 55 98 54 Z" fill="#ff9a3c"/><path d="M99 50 C96 45 99 40 101 36 C103 41 106 44 103 49 Z" fill="#ffd23f" stroke="none"/>
+<ellipse cx="60" cy="88" rx="26" ry="22" fill="#e8572a"/><ellipse cx="60" cy="94" rx="14" ry="12" fill="#ffd9a8" stroke="none"/>
+<path d="M38 84 l8 3 M37 92 l8 2 M82 84 l-8 3 M83 92 l-8 2" stroke="#3a3240" stroke-width="3.5"/>
+<ellipse cx="46" cy="108" rx="9" ry="6" fill="#3a3240"/><ellipse cx="74" cy="108" rx="9" ry="6" fill="#3a3240"/>
+<path d="M34 40 L28 12 L52 30 Z" fill="#3a3240"/><path d="M86 40 L92 12 L68 30 Z" fill="#3a3240"/>
+<path d="M36 34 L33 20 L45 30 Z M84 34 L87 20 L75 30 Z" fill="#e8572a" stroke="none"/>
+<ellipse cx="60" cy="52" rx="30" ry="25" fill="#3a3240"/>
+<path d="M60 28 l-4 9 l4 3 l4 -3 Z" fill="#e8572a" stroke="none"/>
+<ellipse cx="60" cy="63" rx="19" ry="12" fill="#e8572a" stroke="none"/>
+<ellipse cx="48" cy="50" rx="6.5" ry="7.5" fill="#ffd23f" stroke-width="2.5"/><ellipse cx="72" cy="50" rx="6.5" ry="7.5" fill="#ffd23f" stroke-width="2.5"/>
+<ellipse cx="49" cy="51" rx="2.2" ry="5" fill="${K}" stroke="none"/><ellipse cx="71" cy="51" rx="2.2" ry="5" fill="${K}" stroke="none"/>
+<circle cx="46.5" cy="47" r="1.6" fill="#fff" stroke="none"/><circle cx="69.5" cy="47" r="1.6" fill="#fff" stroke="none"/>
+<path d="M57 60 h6 l-3 3 Z" fill="#ff7aa2" stroke-width="1.5"/><path d="M54 66 q3 3 6 0 q3 3 6 0" fill="none" stroke-width="2"/>
+<path d="M30 58 l-12 -2 M30 62 l-12 2 M90 58 l12 -2 M90 62 l12 2" stroke-width="1.5"/>
+<path d="M44 76 q16 6 32 0" fill="none" stroke="#3a3240" stroke-width="4"/><circle cx="60" cy="80" r="5" fill="#ffcb05" stroke-width="2"/>
+</svg>`,
+cherry: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M46 50 C50 30 62 20 72 18 M72 18 C80 30 88 44 88 58" fill="none" stroke="#4d7d24" stroke-width="4"/>
+<path d="M72 18 C78 4 98 2 106 10 C96 22 82 24 72 18 Z" fill="#6fcf4f"/><path d="M76 16 C86 12 96 10 104 10" fill="none" stroke="#3f8f2a" stroke-width="2"/>
+<path d="M72 18 C64 6 48 6 42 12 C50 22 62 24 72 18 Z" fill="#5fbf4a"/>
+<circle cx="90" cy="74" r="16" fill="#c8326a"/><path d="M83 72 q3 -3 6 0 M93 72 q3 -3 6 0" fill="none" stroke-width="2"/><path d="M88 80 q3 2 5 0" fill="none" stroke-width="2"/>
+<circle cx="46" cy="80" r="30" fill="#ef4b6c"/><ellipse cx="34" cy="66" rx="7" ry="5" fill="#fff" opacity=".55" stroke="none" transform="rotate(-30 34 66)"/>
+<path d="M33 80 q5 -6 10 0 M51 80 q5 -6 10 0" fill="none" stroke-width="3"/>
+<ellipse cx="30" cy="90" rx="6" ry="3.5" fill="#ff9bb3" stroke="none"/><ellipse cx="64" cy="90" rx="6" ry="3.5" fill="#ff9bb3" stroke="none"/>
+<path d="M40 90 q7 8 14 0 Z" fill="#8a1f3c" stroke-width="2.5"/>
+</svg>`,
+fox: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M74 96 C100 100 116 80 106 58 C102 48 92 46 88 54 C96 62 92 78 72 82 Z" fill="#d08c4c"/><path d="M106 58 C102 48 92 46 88 54 C94 58 98 60 104 66 Z" fill="#fff2d6" stroke="none"/>
+<ellipse cx="56" cy="92" rx="22" ry="18" fill="#d08c4c"/><ellipse cx="56" cy="98" rx="12" ry="9" fill="#fff2d6" stroke="none"/>
+<ellipse cx="44" cy="108" rx="8" ry="5.5" fill="#d08c4c"/><ellipse cx="68" cy="108" rx="8" ry="5.5" fill="#d08c4c"/>
+<path d="M40 38 C30 22 30 8 34 4 C44 10 50 22 50 34 Z" fill="#d08c4c"/><path d="M72 38 C82 22 82 8 78 4 C68 10 62 22 62 34 Z" fill="#d08c4c"/>
+<path d="M40 30 C36 22 35 14 36 10 C42 16 45 22 46 30 Z M72 30 C76 22 77 14 76 10 C70 16 67 22 66 30 Z" fill="#7a4a24" stroke="none"/>
+<circle cx="56" cy="52" r="24" fill="#d08c4c"/><ellipse cx="56" cy="62" rx="14" ry="10" fill="#fff2d6" stroke="none"/>
+<ellipse cx="46" cy="50" rx="5.5" ry="6.5" fill="#4a2a14" stroke-width="2"/><ellipse cx="66" cy="50" rx="5.5" ry="6.5" fill="#4a2a14" stroke-width="2"/>
+<circle cx="44.5" cy="47.5" r="2" fill="#fff" stroke="none"/><circle cx="64.5" cy="47.5" r="2" fill="#fff" stroke="none"/>
+<ellipse cx="56" cy="59" rx="3" ry="2.2" fill="${K}" stroke="none"/><path d="M52 63 q4 4 8 0" fill="none" stroke-width="2"/>
+<ellipse cx="38" cy="60" rx="4.5" ry="2.8" fill="#ff9bb3" stroke="none"/><ellipse cx="74" cy="60" rx="4.5" ry="2.8" fill="#ff9bb3" stroke="none"/>
+<path d="M36 74 Q56 82 76 74 L60 92 Q56 95 52 92 Z" fill="#2fb3aa"/><circle cx="50" cy="80" r="1.8" fill="#fff" stroke="none"/><circle cx="60" cy="82" r="1.8" fill="#fff" stroke="none"/><circle cx="56" cy="88" r="1.6" fill="#fff" stroke="none"/><circle cx="66" cy="78" r="1.6" fill="#fff" stroke="none"/>
+</svg>`,
+dino: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<defs><linearGradient id="au" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#ffb3d1"/><stop offset=".5" stop-color="#fff0a0"/><stop offset="1" stop-color="#a8f0d8"/></linearGradient></defs>
+<path d="M30 94 C18 97 9 93 6 86 C15 89 23 88 31 84 Z" fill="#a9dcff"/>
+<rect x="33" y="98" width="9" height="14" rx="4.5" fill="#8ccaf5"/><rect x="61" y="98" width="9" height="14" rx="4.5" fill="#8ccaf5"/>
+<ellipse cx="52" cy="91" rx="26" ry="16" fill="#a9dcff"/>
+<rect x="43" y="99" width="9" height="13" rx="4.5" fill="#a9dcff"/><rect x="71" y="97" width="9" height="14" rx="4.5" fill="#a9dcff"/>
+<ellipse cx="54" cy="97" rx="15" ry="6" fill="#e8f6ff" stroke="none"/>
+<path d="M37 80 l4 -7 l4 7 l-4 5 Z M49 77 l4 -8 l4 8 l-4 5 Z" fill="#e8f6ff" stroke-width="2"/>
+<path d="M58 86 C62 70 65 57 71 47 L85 51 C81 63 77 76 72 92 Z" fill="#a9dcff"/>
+<path d="M84 52 C95 57 99 70 96 84 C91 76 87 70 81 66 Z" fill="url(#au)"/>
+<path d="M90 30 C106 32 114 50 110 72 C105 62 99 55 92 51 Z" fill="url(#au)"/>
+<ellipse cx="82" cy="38" rx="18" ry="15" fill="#a9dcff"/>
+<path d="M71 27 l3 -9 l5 7 Z" fill="#ffb3d1" stroke-width="2.5"/><path d="M79 24 l4 -10 l4 9 Z" fill="#fff0a0" stroke-width="2.5"/><path d="M87 26 l6 -8 l1 10 Z" fill="#a8f0d8" stroke-width="2.5"/>
+<ellipse cx="86" cy="37" rx="4.8" ry="6" fill="${K}" stroke="none"/><circle cx="84.6" cy="34.6" r="1.9" fill="#fff" stroke="none"/><circle cx="87.6" cy="39.6" r="0.9" fill="#fff" stroke="none"/>
+<path d="M93 44 l3 -4 l3 4 l-3 4 Z" fill="#ffb3d1" stroke-width="1.8"/>
+<ellipse cx="79" cy="45" rx="4.5" ry="2.5" fill="#ff9bb3" stroke="none"/>
+<path d="M90 47 q-4 3 -8 1" fill="none" stroke-width="2"/>
+<path d="M18 62 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 Z M104 14 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2 Z" fill="#fff6b0" stroke="none"/>
+</svg>`
+};
+const artUri = k => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ART[k]);
+const ART_FOR = { torracat:'kitten', cherubi:'cherry', eevee:'fox', amaura:'dino' };
+function artImg(k, cls, alt){ const im = new Image(); im.src = artUri(k); im.alt = alt || ''; if (cls) im.className = cls; return im; }
+(function addMascots(){
+  const ball = $('ball');
+  [['dino','Frost dino'],['fox','Fluff fox'],['cherry','Cherry buddy'],['kitten','Ember kitten']].forEach(([k, alt]) => ball.after(artImg(k, 'mascot m-' + k, '')));
+})();
+function partnerPic(p, cls, size){
+  const ak = ART_FOR[(p.name || '').toLowerCase()];
+  if (!p.img) return ak ? artImg(ak, cls, p.name) : ballCanvas(size);
+  const im = new Image(); im.src = '/_blob/' + p.img; im.alt = p.name; im.loading = 'lazy'; if (cls) im.className = cls;
+  im.onerror = () => im.replaceWith(ballCanvas(size));
+  return im;
+}
+function renderPartners(){
+  const root = $('partners'); root.replaceChildren();
+  for (const p of partners){
+    const f = el('figure'); f.append(partnerPic(p, '', 120), el('figcaption', null, p.name)); root.append(f);
+  }
+}
+function ordinal(a){ const s=['th','st','nd','rd'], v=a%100; return s[(v-20)%10]||s[v]||s[0]; }
+function addHour(t){ const [h,m] = t.split(':').map(Number); return String(Math.min(23,h+2)).padStart(2,'0') + ':' + String(m).padStart(2,'0'); }
+
+let hostFilled = false;
+function fillHostForm(){
+  if (hostFilled) return; hostFilled = true;
+  const d = details;
+  $('dName').value = d.name; $('dAge').value = d.age; $('dDate').value = d.date; $('dRsvpBy').value = d.rsvpBy;
+  $('dStart').value = d.start; $('dEnd').value = d.end; $('dPlace').value = d.place; $('dAddr').value = d.address;
+  $('dHost').value = d.host; $('dMsg').value = d.message; $('dNotes').value = d.notes;
+  $('dMsg').placeholder = defaultMessage();
+}
+
+/* ---------- type chips & status choices ---------- */
+function typeChip(key){
+  const t = TYPE[key] || TYPE.electric;
+  const s = el('span','type', t[1]); s.style.background = t[2]; return s;
+}
+
+document.querySelectorAll('.choice').forEach(b => b.onclick = () => { form.status = b.dataset.v; syncForm(); });
+function syncForm(){
+  document.querySelectorAll('.choice').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === form.status)));
+  document.querySelectorAll('#types button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === form.type)));
+  $('countsRow').hidden = form.status === 'no';
+}
+syncForm();
+// mini balls on choices
+document.querySelectorAll('canvas[data-ball]').forEach(c => drawBall(c.getContext('2d'), 28, 28, 24, c.dataset.ball));
+function drawBall(x, cx, cy, r, top){
+  x.save(); x.lineWidth = r*0.16; x.strokeStyle = '#1e2433';
+  x.beginPath(); x.arc(cx,cy,r,Math.PI,0); x.fillStyle = top; x.fill();
+  x.beginPath(); x.arc(cx,cy,r,0,Math.PI); x.fillStyle = '#fff'; x.fill();
+  x.beginPath(); x.arc(cx,cy,r,0,Math.PI*2); x.stroke();
+  x.beginPath(); x.moveTo(cx-r,cy); x.lineTo(cx+r,cy); x.stroke();
+  x.beginPath(); x.arc(cx,cy,r*0.32,0,Math.PI*2); x.fillStyle='#fff'; x.fill(); x.stroke();
+  x.restore();
+}
+
+/* ---------- roster ---------- */
+function renderRoster(){
+  const groups = { yes:[], maybe:[], no:[] };
+  let ad = 0, kd = 0;
+  for (const r of rsvps){
+    const st = ['yes','maybe','no'].includes(r.status) ? r.status : 'maybe';
+    groups[st].push(r);
+    if (st === 'yes'){ ad += int(r.adults,0,20); kd += int(r.kids,0,20); }
+  }
+  $('tGo').textContent = groups.yes.length;
+  $('tGoSub').textContent = `${ad} grown-up${ad===1?'':'s'} · ${kd} kid${kd===1?'':'s'}`;
+  $('tMaybe').textContent = groups.maybe.length;
+  $('tNo').textContent = groups.no.length;
+
+  const root = $('roster'); root.replaceChildren();
+  if (!rsvps.length){
+    root.append(el('div','empty', rosterOfflineText));
+    return;
+  }
+  const titles = { yes:'Joining the party', maybe:'Maybe', no:"Can't make it" };
+  for (const st of ['yes','maybe','no']){
+    if (!groups[st].length) continue;
+    const g = el('div','group'); const h = el('h3', null, `${titles[st]} (${groups[st].length})`);
+    const cards = el('div','cards');
+    groups[st].sort((a,b) => str(b.updatedAt,40).localeCompare(str(a.updatedAt,40)));
+    for (const r of groups[st]){
+      const c = el('div','tc' + (st==='no' ? ' dim' : '')); c.style.setProperty('--tc', st==='yes' ? '#4fb553' : st==='maybe' ? '#ffcb05' : '#8a93a6');
+      if (r.id === uid) c.append(el('span','you','You'));
+      c.append(el('div','nm', str(r.name,60) || 'A mystery trainer'));
+      const meta = el('div','meta');
+      if (st !== 'no'){
+        const a = int(r.adults,0,20), k = int(r.kids,0,20);
+        meta.append(document.createTextNode(`${a} grown-up${a===1?'':'s'}, ${k} kid${k===1?'':'s'}`));
+      }
+      c.append(meta);
+      const note = str(r.note,200);
+      if (note) c.append(el('div','msg', '“' + note + '”'));
+      if (isOwner && r.id !== uid) c.append(removeBtn(r));
+      cards.append(c);
+    }
+    g.append(h, cards); root.append(g);
+  }
+}
+function removeBtn(r){
+  const b = el('button','btn small','Remove'); b.type='button'; let armed = false;
+  b.onclick = async () => {
+    if (!armed){ armed = true; b.textContent = 'Tap again to remove'; setTimeout(()=>{ armed=false; b.textContent='Remove'; }, 4000); return; }
+    b.disabled = true;
+    try { await call({ action:'delete', key:hostKey, id:r.id }); await refresh(); } catch(e){ b.disabled=false; b.textContent='Could not remove'; }
+  };
+  return b;
+}
+let rosterOfflineText = 'Loading the guest list…';
+
+/* ---------- RSVP submit ---------- */
+$('rsvpForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('rName').value.trim();
+  if (!name){ $('rName').focus(); setStatus('alert','Add your trainer name so the host knows who is coming.'); return; }
+  if (!API){ setStatus('alert', 'RSVPs are not connected yet. Please check back soon.'); return; }
+  const data = {
+    name: name.slice(0,60), status: form.status,
+    adults: form.status==='no' ? 0 : int($('rAdults').value,0,20),
+    kids: form.status==='no' ? 0 : int($('rKids').value,0,20),
+    note: $('rNote').value.trim().slice(0,200), updatedAt: new Date().toISOString()
+  };
+  const btn = $('rSubmit'); btn.disabled = true;
+  try {
+    const j = await call({ action:'rsvp', id: me && me.id, token: me && me.token, ...data });
+    me = { id: j.id, token: j.token }; uid = j.id; store.set('irisRsvp', me);
+    mine = data; setStatus('', ''); updateSubmitLabel();
+    catchAnim(data);
+    refresh().catch(() => {});
+  } catch(err){
+    setStatus('alert', err && err.code === 'full' ? 'The guest list is full. Let the host know.' : 'Your RSVP did not save. Check your connection and try again.');
+  } finally { btn.disabled = false; }
+});
+function setStatus(cls, msg){ const s = $('rStatus'); s.className = cls; s.textContent = msg; s.hidden = !msg; }
+function updateSubmitLabel(){ $('rSubmit').textContent = mine ? 'Update my RSVP' : 'Throw the ball! (Send RSVP)'; }
+/* ---------- host save ---------- */
+$('detailsForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const d = clean({
+    name:$('dName').value.trim(), age: $('dAge').value ? String(int($('dAge').value,1,120)) : '',
+    date:$('dDate').value, start:$('dStart').value, end:$('dEnd').value, place:$('dPlace').value.trim(),
+    address:$('dAddr').value.trim(), host:$('dHost').value.trim(), rsvpBy:$('dRsvpBy').value,
+    message:$('dMsg').value.trim(), notes:$('dNotes').value.trim()
+  });
+  $('dSave').disabled = true; $('dStatus').textContent = 'Saving…';
+  try { await call({ action:'details', key:hostKey, details:d }); details = d; renderDetails(); $('dStatus').textContent = 'Saved. Guests see it within a minute.'; }
+  catch(err){ $('dStatus').textContent = 'Did not save. Try again.'; }
+  finally { $('dSave').disabled = false; }
+});
+
+/* ---------- magic: ball open, dialogue, confetti, sound ---------- */
+let typer = null;
+function typeText(text){
+  clearInterval(typer);
+  const p = $('dialogText');
+  if (reduce){ p.textContent = text; return; }
+  let i = 0; p.textContent = '';
+  typer = setInterval(() => { p.textContent = text.slice(0, ++i); if (i >= text.length) clearInterval(typer); }, 28);
+}
+$('ball').addEventListener('click', () => {
+  const stage = $('stage');
+  if (stage.classList.contains('opened')){
+    stage.classList.remove('opened'); void stage.offsetWidth;
+  }
+  stage.classList.add('opened'); opened = true;
+  $('tapHint').textContent = 'Tap again!';
+  const r = $('ball').getBoundingClientRect();
+  burst(r.left + r.width/2, r.top + r.height/2, 90);
+  jingle([523,659,784,1047,784,1047], 0.11);
+  const n = details.name || 'Iris';
+  const lines = [
+    `${n} used BIRTHDAY INVITE!\nIt's super effective!`,
+    details.message || defaultMessage(),
+    `A wild party appeared!\nWill you join ${n}'s team?`
+  ];
+  typeText(lines[clicks++ % lines.length]);
+  $('speaker').textContent = clicks === 1 ? 'Professor Party' : n;
+});
+let clicks = 0;
+
+const fx = $('fx'), cx = fx.getContext('2d');
+let parts = [], raf = 0;
+function sizeFx(){ const d = devicePixelRatio || 1; fx.width = innerWidth*d; fx.height = innerHeight*d; cx.setTransform(d,0,0,d,0,0); }
+sizeFx(); addEventListener('resize', sizeFx);
+const COLORS = ['#ffcb05','#e3350d','#3d7dca','#78c850','#f85888','#ffffff'];
+function burst(x, y, n){
+  if (reduce) return;
+  for (let i=0;i<n;i++){
+    const a = Math.random()*Math.PI*2, s = 3 + Math.random()*7;
+    const kind = Math.random() < .15 ? 'ball' : Math.random() < .5 ? 'star' : Math.random() < .5 ? 'bolt' : 'dot';
+    parts.push({ x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s - 4, g:.18, life:90+Math.random()*50, r:4+Math.random()*6,
+      rot:Math.random()*6, vr:(Math.random()-.5)*.3, c:COLORS[i%COLORS.length], kind });
+  }
+  if (!raf) raf = requestAnimationFrame(tick);
+}
+function sparkle(node){ const r = node.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2, 14); }
+function star(x,y,r){ cx.beginPath(); for(let i=0;i<10;i++){ const rr = i%2? r*.45 : r; const a = i*Math.PI/5 - Math.PI/2; cx.lineTo(x+Math.cos(a)*rr, y+Math.sin(a)*rr);} cx.closePath(); cx.fill(); }
+function bolt(r){ cx.beginPath(); cx.moveTo(-r*.2,-r); cx.lineTo(r*.5,-r*.1); cx.lineTo(0,0); cx.lineTo(r*.3,r); cx.lineTo(-r*.5,r*.05); cx.lineTo(0,0); cx.closePath(); cx.fill(); }
+function tick(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts = parts.filter(p => p.life-- > 0);
+  for (const p of parts){
+    p.vy += p.g; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+    cx.save(); cx.globalAlpha = Math.min(1, p.life/30); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.fillStyle = p.c;
+    if (p.kind==='star') star(0,0,p.r);
+    else if (p.kind==='bolt'){ cx.fillStyle='#ffcb05'; bolt(p.r*1.3); }
+    else if (p.kind==='ball') drawBall(cx,0,0,p.r,'#e3350d');
+    else { cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2); }
+    cx.restore();
+  }
+  raf = parts.length ? requestAnimationFrame(tick) : 0;
+  if (!raf) cx.clearRect(0,0,innerWidth,innerHeight);
+}
+let actx = null;
+function jingle(notes, step){
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = actx.currentTime + .02;
+    notes.forEach((f,i) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'square'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0+i*step); g.gain.linearRampToValueAtTime(.06, t0+i*step+.01);
+      g.gain.exponentialRampToValueAtTime(.001, t0+i*step+step*.95);
+      o.connect(g).connect(actx.destination); o.start(t0+i*step); o.stop(t0+i*step+step);
+    });
+  } catch(e){}
+}
+
+/* ---------- catch animation ---------- */
+function catchAnim(d){
+  const ov = $('overlay'), b = $('cball'), t = $('catchText'), n = details.name || 'Iris';
+  const nm = d.name;
+  ov.hidden = false; b.className = 'cball'; t.textContent = '';
+  const finalText = d.status === 'yes' ? `Gotcha!\n${nm} joined ${n}'s party!`
+                  : d.status === 'maybe' ? `Aww! It appeared to be caught...\n${nm} might join. Update any time!`
+                  : `${nm} can't make it this time.\n${n} will miss you!`;
+  const show = txt => { t.style.whiteSpace = 'pre-line'; t.textContent = txt; };
+  if (reduce){ show(finalText); $('catchClose').focus(); return; }
+  void b.offsetWidth; b.classList.add('drop');
+  show('...');
+  setTimeout(() => { b.className = 'cball shake'; show('Wiggle... wiggle... wiggle...'); }, 650);
+  setTimeout(() => {
+    if (d.status !== 'no') b.classList.add('click');
+    show(finalText);
+    if (d.status === 'yes'){ const r = b.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2, 120); jingle([784,988,1175,1568],0.12); }
+    else if (d.status === 'maybe') jingle([659,784],0.15);
+    else jingle([523,440,349],0.18);
+    $('catchClose').focus();
+  }, 2500);
+}
+$('catchClose').onclick = () => { $('overlay').hidden = true; document.querySelector('#rosterH').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' }); };
+
+/* ---------- connect ---------- */
+renderDetails(); renderRoster(); renderPartners();
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+async function call(body){
+  // text/plain body keeps this a "simple" request, which Google Apps Script accepts cross-site
+  const r = await fetch(API, { method:'POST', body: JSON.stringify(body) });
+  if (!r.ok) throw Object.assign(new Error('http ' + r.status), { code:'http' });
+  const j = await r.json();
+  if (j && j.error) throw Object.assign(new Error(j.error), { code: j.error });
+  return j;
+}
+async function refresh(){
+  const j = await call({ action:'list' });
+  details = clean(j.details || {});
+  rsvps = (Array.isArray(j.rsvps) ? j.rsvps : []).filter(r => r && typeof r.id === 'string');
+  loaded = true;
+  if (me && !rsvps.some(r => r.id === me.id)){ me = null; uid = null; mine = null; store.del('irisRsvp'); updateSubmitLabel(); }
+  const m = me && rsvps.find(r => r.id === me.id);
+  if (m && !mine){
+    mine = m;
+    $('rName').value = str(m.name,60); $('rAdults').value = int(m.adults,0,20); $('rKids').value = int(m.kids,0,20);
+    $('rNote').value = str(m.note,200);
+    form.status = ['yes','maybe','no'].includes(m.status) ? m.status : 'yes';
+    syncForm(); updateSubmitLabel();
+    $('rsvpSub').textContent = 'Welcome back, trainer! Here is your RSVP. Change anything and update it.';
+  }
+  rosterOfflineText = 'No trainers yet. Be the first to RSVP!';
+  renderDetails(); renderRoster();
+}
+async function boot(){
+  me = store.get('irisRsvp');
+  if (!(me && typeof me.id === 'string' && typeof me.token === 'string')) me = null;
+  uid = me ? me.id : null;
+  // host mode: open the page once with ?host=YOUR-KEY on your own device
+  const q = new URLSearchParams(location.search);
+  if (q.get('host')){ store.set('irisHost', q.get('host')); q.delete('host'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); }
+  hostKey = store.get('irisHost') || '';
+  if (!API){
+    rosterOfflineText = 'The guest list is not connected yet. Please check back soon.'; renderRoster();
+    const g = $('rsvpGate'); g.hidden = false; g.textContent = 'RSVPs open soon. Please check back in a little while.';
+    $('rSubmit').disabled = true; return;
+  }
+  if (hostKey){
+    try { const c = await call({ action:'checkHost', key:hostKey }); isOwner = !!c.ok; } catch(e){ isOwner = false; }
+    if (isOwner){ $('hostPanel').hidden = false; fillHostForm(); } else store.del('irisHost');
+  }
+  const slow = setTimeout(() => { if (!loaded){ rosterOfflineText = "Can't reach the guest list right now. It will show up once the connection returns."; renderRoster(); } }, 10000);
+  try { await refresh(); } catch(e){ rosterOfflineText = "Can't reach the guest list right now. Try reloading in a minute."; renderRoster(); }
+  clearTimeout(slow);
+  setInterval(() => { if (!document.hidden) refresh().catch(() => {}); }, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh().catch(() => {}); });
+}
+boot();
+})();
+</script>
+</body>
+</html>
