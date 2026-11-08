@@ -731,16 +731,33 @@ function tick(){
   if (!raf) cx.clearRect(0,0,innerWidth,innerHeight);
 }
 let actx = null;
-function jingle(notes, step){
+function audio(){
+  if (!actx){
+    // iPhone/iPad (iOS 17+): play like media, so the ring/silent switch doesn't mute it
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+    try { actx = new AC(); } catch(e){ return null; }
+  }
+  if (actx.state !== 'running'){ try { actx.resume(); } catch(e){} }
+  return actx;
+}
+// Phones only allow sound after a tap: wake the audio up on the first touch anywhere on the page
+function unlockAudio(){
+  const a = audio(); if (!a) return;
+  try { const b = a.createBuffer(1, 1, 22050), src = a.createBufferSource(); src.buffer = b; src.connect(a.destination); src.start(0); } catch(e){}
+}
+['pointerdown','touchend','keydown'].forEach(ev => addEventListener(ev, unlockAudio, { once:true, passive:true, capture:true }));
+async function jingle(notes, step){
   try {
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    const t0 = actx.currentTime + .02;
+    const a = audio(); if (!a) return;
+    if (a.state !== 'running') await a.resume();
+    const t0 = a.currentTime + .03;
     notes.forEach((f,i) => {
-      const o = actx.createOscillator(), g = actx.createGain();
+      const o = a.createOscillator(), g = a.createGain();
       o.type = 'square'; o.frequency.value = f;
-      g.gain.setValueAtTime(0, t0+i*step); g.gain.linearRampToValueAtTime(.06, t0+i*step+.01);
+      g.gain.setValueAtTime(0, t0+i*step); g.gain.linearRampToValueAtTime(.1, t0+i*step+.01);
       g.gain.exponentialRampToValueAtTime(.001, t0+i*step+step*.95);
-      o.connect(g).connect(actx.destination); o.start(t0+i*step); o.stop(t0+i*step+step);
+      o.connect(g).connect(a.destination); o.start(t0+i*step); o.stop(t0+i*step+step);
     });
   } catch(e){}
 }
