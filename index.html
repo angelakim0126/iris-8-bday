@@ -489,23 +489,29 @@ fox: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="${K}
 <path d="M36 74 Q56 82 76 74 L60 92 Q56 95 52 92 Z" fill="#2fb3aa"/><circle cx="50" cy="80" r="1.8" fill="#fff" stroke="none"/><circle cx="60" cy="82" r="1.8" fill="#fff" stroke="none"/><circle cx="56" cy="88" r="1.6" fill="#fff" stroke="none"/><circle cx="66" cy="78" r="1.6" fill="#fff" stroke="none"/>
 </svg>`,
 dino: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-<defs><linearGradient id="au" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#ffb3d1"/><stop offset=".5" stop-color="#fff0a0"/><stop offset="1" stop-color="#a8f0d8"/></linearGradient></defs>
-<path d="M30 94 C18 97 9 93 6 86 C15 89 23 88 31 84 Z" fill="#a9dcff"/>
-<rect x="33" y="98" width="9" height="14" rx="4.5" fill="#8ccaf5"/><rect x="61" y="98" width="9" height="14" rx="4.5" fill="#8ccaf5"/>
-<ellipse cx="52" cy="91" rx="26" ry="16" fill="#a9dcff"/>
-<rect x="43" y="99" width="9" height="13" rx="4.5" fill="#a9dcff"/><rect x="71" y="97" width="9" height="14" rx="4.5" fill="#a9dcff"/>
-<ellipse cx="54" cy="97" rx="15" ry="6" fill="#e8f6ff" stroke="none"/>
-<path d="M37 80 l4 -7 l4 7 l-4 5 Z M49 77 l4 -8 l4 8 l-4 5 Z" fill="#e8f6ff" stroke-width="2"/>
-<path d="M58 86 C62 70 65 57 71 47 L85 51 C81 63 77 76 72 92 Z" fill="#a9dcff"/>
-<path d="M84 52 C95 57 99 70 96 84 C91 76 87 70 81 66 Z" fill="url(#au)"/>
-<path d="M90 30 C106 32 114 50 110 72 C105 62 99 55 92 51 Z" fill="url(#au)"/>
-<ellipse cx="82" cy="38" rx="18" ry="15" fill="#a9dcff"/>
-<path d="M71 27 l3 -9 l5 7 Z" fill="#ffb3d1" stroke-width="2.5"/><path d="M79 24 l4 -10 l4 9 Z" fill="#fff0a0" stroke-width="2.5"/><path d="M87 26 l6 -8 l1 10 Z" fill="#a8f0d8" stroke-width="2.5"/>
-<ellipse cx="86" cy="37" rx="4.8" ry="6" fill="${K}" stroke="none"/><circle cx="84.6" cy="34.6" r="1.9" fill="#fff" stroke="none"/><circle cx="87.6" cy="39.6" r="0.9" fill="#fff" stroke="none"/>
-<path d="M93 44 l3 -4 l3 4 l-3 4 Z" fill="#ffb3d1" stroke-width="1.8"/>
-<ellipse cx="79" cy="45" rx="4.5" ry="2.5" fill="#ff9bb3" stroke="none"/>
-<path d="M90 47 q-4 3 -8 1" fill="none" stroke-width="2"/>
-<path d="M18 62 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 Z M104 14 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2 Z" fill="#fff6b0" stroke="none"/>
+<defs>
+<linearGradient id="au1" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc2dc"/><stop offset=".5" stop-color="#fff3a6"/><stop offset="1" stop-color="#9ff0d4"/></linearGradient>
+<linearGradient id="au2" x1="1" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#d9c2ff"/><stop offset=".55" stop-color="#ffc2dc"/><stop offset="1" stop-color="#fff3a6"/></linearGradient>
+<radialGradient id="skin" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#d8f1ff"/><stop offset="1" stop-color="#9fd6fb"/></radialGradient>
+</defs>
+<path d="M60 30 C42 26 30 38 28 54 C27 64 32 72 38 74 C35 62 40 50 56 44 Z" fill="url(#au1)"/>
+<path d="M62 40 C50 46 45 60 49 74 C52 81 58 84 62 84 C57 74 59 60 68 50 Z" fill="url(#au2)"/>
+<path d="M30 92 C20 95 12 92 9 86 C17 88 24 86 31 82 Z" fill="url(#skin)"/>
+<rect x="31" y="97" width="10" height="14" rx="5" fill="#86c4ee"/><rect x="58" y="97" width="10" height="14" rx="5" fill="#86c4ee"/>
+<ellipse cx="50" cy="89" rx="25" ry="16" fill="url(#skin)"/>
+<rect x="41" y="99" width="10" height="13" rx="5" fill="url(#skin)"/><rect x="68" y="97" width="10" height="14" rx="5" fill="url(#skin)"/>
+<ellipse cx="52" cy="96" rx="14" ry="6" fill="#ecf8ff" stroke="none"/>
+<path d="M34 79 l4 -6 l4 6 l-4 5 Z M45 75 l4 -7 l4 7 l-4 5 Z" fill="#ecf8ff" stroke-width="2"/>
+<path d="M58 84 C60 72 62 63 66 55 L82 57 C79 67 76 77 73 90 Z" fill="url(#skin)"/>
+<path d="M70 22 C70 14 76 10 80 12 C82 16 80 22 78 26 Z" fill="#ffc2dc" stroke-width="2.5"/>
+<path d="M78 22 C80 14 88 12 91 15 C91 20 87 24 84 27 Z" fill="#fff3a6" stroke-width="2.5"/>
+<ellipse cx="78" cy="42" rx="21" ry="18" fill="url(#skin)"/>
+<path d="M64 33 C68 29 74 28 78 30" fill="none" stroke="#ffffff" stroke-width="3" opacity=".8"/>
+<ellipse cx="86" cy="40" rx="5.4" ry="6.6" fill="${K}" stroke="none"/><circle cx="84.4" cy="37.4" r="2.2" fill="#fff" stroke="none"/><circle cx="87.8" cy="43" r="1" fill="#fff" stroke="none"/>
+<path d="M75 50 l3 -4 l3 4 l-3 4 Z" fill="#ffc2dc" stroke-width="1.8"/>
+<ellipse cx="91" cy="50" rx="4.2" ry="2.4" fill="#ff9bb8" stroke="none"/>
+<path d="M95 47 q-2 4 -7 4" fill="none" stroke-width="2"/><circle cx="97" cy="41" r="0.9" fill="${K}" stroke="none"/>
+<path d="M14 54 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 Z M104 18 l1.3 3.2 3.2 1.3 -3.2 1.3 -1.3 3.2 -1.3 -3.2 -3.2 -1.3 3.2 -1.3 Z M100 74 l1 2.4 2.4 1 -2.4 1 -1 2.4 -1 -2.4 -2.4 -1 2.4 -1 Z" fill="#fff6b0" stroke="none"/>
 </svg>`
 };
 const artUri = k => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ART[k]);
