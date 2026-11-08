@@ -169,6 +169,8 @@ textarea{resize:vertical;min-height:72px}
 .prow input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .hosth{font-size:22px;margin-top:22px}
 @media (max-width:520px){.partners{grid-template-columns:repeat(2,minmax(0,1fr))}.prow{grid-template-columns:48px minmax(0,1fr)}.prow .acts{grid-column:1/-1;justify-content:flex-start}}
+.fact .ask{display:block;margin-top:6px}
+.fact .ask a{color:#14532d;font-weight:900;white-space:nowrap}
 .empty{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--ink-soft);font-weight:700}
 
 .host{border-color:var(--sky-deep);background:#f3f9ff}
@@ -239,7 +241,7 @@ footer b{color:var(--yellow)}
       <div class="facts">
         <div class="fact"><span class="pix">When</span><b id="fWhen">Date coming soon</b><span id="fTime"></span></div>
         <div class="fact"><span class="pix">Where</span><b id="fPlace">Location coming soon</b><span id="fAddr"></span></div>
-        <div class="fact"><span class="pix">Hosted by</span><b id="fHost">Iris's family</b><span id="fRsvpBy"></span></div>
+        <div class="fact"><span class="pix">Hosted by</span><b id="fHost">Iris's family</b><span id="fRsvpBy"></span><span class="ask">Questions? Call or text <a href="sms:+16508627835">(650) 862-7835</a></span></div>
         <div class="fact"><span class="pix">Trainer notes</span><span id="fNotes">Wear your favorite type colors. Party games, cake, and a few surprises.</span></div>
         <div class="fact wide"><span class="pix">Favorite partners</span><div class="partners" id="partners"></div></div>
       </div>
