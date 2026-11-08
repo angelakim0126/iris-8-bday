@@ -160,7 +160,7 @@ textarea{resize:vertical;min-height:72px}
 .tc.dim{opacity:.75}
 .partners{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:4px}
 .partners figure{margin:0;background:#fff;border:2px solid #9fd1ad;border-radius:12px;padding:8px 6px 4px;text-align:center;min-width:0;display:grid;justify-items:center;gap:2px}
-.partners img,.partners canvas{width:100%;max-width:120px;aspect-ratio:1;object-fit:contain;display:block}
+.partners img,.partners canvas{width:100%;max-width:96px;aspect-ratio:1;object-fit:contain;display:block}
 .partners figcaption{font-family:var(--pixel);font-size:8px;color:#2d5c3a;padding:4px 0;overflow-wrap:anywhere}
 .pedit{display:grid;gap:10px}
 .prow{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px}
@@ -241,7 +241,7 @@ footer b{color:var(--yellow)}
         <div class="fact"><span class="pix">Where</span><b id="fPlace">Location coming soon</b><span id="fAddr"></span></div>
         <div class="fact"><span class="pix">Hosted by</span><b id="fHost">Iris's family</b><span id="fRsvpBy"></span></div>
         <div class="fact"><span class="pix">Trainer notes</span><span id="fNotes">Wear your favorite type colors. Party games, cake, and a few surprises.</span></div>
-        <div class="fact wide"><span class="pix">Favorite partners · drawn by Iris</span><div class="partners" id="partners"></div></div>
+        <div class="fact wide"><span class="pix">Favorite partners</span><div class="partners" id="partners"></div></div>
       </div>
       <div class="count" id="countBox">
         <span class="pix">Days to party</span>
@@ -522,11 +522,8 @@ function artImg(k, cls, alt){ const im = new Image(); im.src = artUri(k); im.alt
   const ball = $('ball');
   [['dino','Frost dino'],['fox','Fluff fox'],['cherry','Cherry buddy'],['kitten','Ember kitten']].forEach(([k, alt]) => ball.after(artImg(k, 'mascot m-' + k, '')));
 })();
-const IRIS_ART = { torracat:'images/torracat.png', cherubi:'images/cherubi.png', eevee:'images/eevee.png', amaura:'images/amaura.png' };
 function partnerPic(p, cls, size){
   const ak = ART_FOR[(p.name || '').toLowerCase()];
-  const ia = IRIS_ART[(p.name || '').toLowerCase()];
-  if (ia){ const im = new Image(); im.src = ia; im.alt = p.name + ', drawn by Iris'; im.loading = 'lazy'; if (cls) im.className = cls; im.onerror = () => im.replaceWith(ak ? artImg(ak, cls, p.name) : ballCanvas(size)); return im; }
   if (!p.img) return ak ? artImg(ak, cls, p.name) : ballCanvas(size);
   const im = new Image(); im.src = '/_blob/' + p.img; im.alt = p.name; im.loading = 'lazy'; if (cls) im.className = cls;
   im.onerror = () => im.replaceWith(ballCanvas(size));
