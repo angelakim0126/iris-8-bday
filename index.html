@@ -708,14 +708,29 @@ $('ball').addEventListener('click', () => {
       [[G,q*.75,c3],[G,q*.25],[G5,q,c3],[E,q],[C,q,f2],[B,q],[A,q*2]],
       [[F,q*.75,f2],[F,q*.25],[E,q,c3],[C,q],[D,q,g2],[C,q*3,c3]]
     ];
-    const words = ['Happy birthday to you ♪', 'Happy birthday to you ♪', `Happy birthday dear ${n} ♪`, 'Happy birthday to you!'];
+    // karaoke: one syllable per note, so the words land exactly on the music
+    const syl = [
+      ['Hap','py ','birth','day ','to ','you ♪'],
+      ['Hap','py ','birth','day ','to ','you ♪'],
+      ['Hap','py ','birth','day ','dear ', n, ' ♪'],
+      ['Hap','py ','birth','day ','to ','you!']
+    ];
+    clearInterval(typer);
+    const box = $('dialogText'); box.textContent = '';
     let at = 0;
     lines.forEach((ln, k) => {
-      setTimeout(() => {
-        typeText(words.slice(0, k + 1).join('\n'));
-        burst(innerWidth * (.2 + .3 * (k % 3)), by - 40, 60);
-      }, at * 1000);
-      at += ln.reduce((t, x) => t + x[1], 0);
+      ln.forEach((note, m) => {
+        setTimeout(() => {
+          if (m === 0){
+            const done = syl.slice(Math.max(0, k - 1), k).map(w => w.join(''));   // keep the previous line above
+            box.dataset.prev = done.join('\n');
+            burst(innerWidth * (.2 + .3 * (k % 3)), by - 40, 60);
+          }
+          const cur = syl[k].slice(0, m + 1).join('');
+          box.textContent = (box.dataset.prev ? box.dataset.prev + '\n' : '') + cur;
+        }, at * 1000);
+        at += note[1];
+      });
     });
     tune(lines.flat());
     burst(bx, by, 120);
