@@ -107,6 +107,7 @@ main{display:flex;flex-direction:column;gap:26px;padding-block:22px 40px;backgro
 .fact span{font-size:14px;color:#2d5c3a;overflow-wrap:anywhere}
 .fact a{color:#14532d;font-weight:800}
 .wide{grid-column:1/-1}
+.fact .notes{display:block;white-space:pre-line;font-size:16px;color:#183a22;font-weight:700;line-height:1.5}
 .count{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#183a22;color:#bff5c8;border-radius:8px;padding:12px 14px}
 .count .n{font-family:var(--pixel);font-size:20px;color:var(--yellow);font-variant-numeric:tabular-nums}
 .hp{flex:1 1 160px;height:12px;border-radius:999px;background:#0e2415;border:2px solid #bff5c8;overflow:hidden}
@@ -241,8 +242,8 @@ footer b{color:var(--yellow)}
       <div class="facts">
         <div class="fact"><span class="pix">When</span><b id="fWhen">Date coming soon</b><span id="fTime"></span></div>
         <div class="fact"><span class="pix">Where</span><b id="fPlace">Location coming soon</b><span id="fAddr"></span></div>
-        <div class="fact"><span class="pix">Hosted by</span><b id="fHost">Iris's family</b><span id="fRsvpBy"></span><span class="ask">Questions? Call or text <a href="sms:+16508627835">(650) 862-7835</a></span></div>
-        <div class="fact"><span class="pix">Trainer notes</span><span id="fNotes">Wear your favorite type colors. Party games, cake, and a few surprises.</span></div>
+        <div class="fact wide"><span class="pix">Hosted by</span><b id="fHost">Iris's family</b><span id="fRsvpBy"></span><span class="ask">Questions? Call or text <a href="sms:+16508627835">(650) 862-7835</a></span></div>
+        <div class="fact wide"><span class="pix">Trainer notes</span><span id="fNotes" class="notes"></span></div>
         <div class="fact wide"><span class="pix">Favorite partners</span><div class="partners" id="partners"></div></div>
       </div>
       <div class="count" id="countBox">
@@ -286,10 +287,8 @@ footer b{color:var(--yellow)}
 
   <section class="panel" id="rsvp" aria-labelledby="rsvpH">
     <h2 id="rsvpH">Join the party</h2>
-    <p class="sub" id="rsvpSub">Pick your answer. You can come back and change it any time.</p>
+    <p class="sub" id="rsvpSub">Siblings are welcome.</p>
     <div id="rsvpGate" class="alert" hidden></div>
-    <p class="note" id="rsvpBy2" hidden></p>
-    <p class="note">Siblings are welcome. Just count them in the kids number so we can plan.</p>
     <form id="rsvpForm">
       <label class="f">Trainer name (you or your family)<input type="text" id="rName" maxlength="60" placeholder="e.g. Maya & the Parks" required></label>
       <div>
@@ -313,7 +312,6 @@ footer b{color:var(--yellow)}
 
   <section class="panel" aria-labelledby="rosterH">
     <h2 id="rosterH">Party roster</h2>
-    <p class="sub">Everyone invited can see who's coming.</p>
     <div class="tally">
       <div><span class="pix">Going</span><b id="tGo">0</b><small id="tGoSub">0 grown-ups · 0 kids</small></div>
       <div><span class="pix">Maybe</span><b id="tMaybe">0</b><small>families</small></div>
@@ -323,12 +321,6 @@ footer b{color:var(--yellow)}
   </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <div><b>Unofficial fan-made invitation.</b> Made for a private family birthday party and shared only with friends. Not for commercial use, not for sale.</div>
-    <div>Pokémon and Poké Ball are trademarks of Nintendo, Creatures Inc. and GAME FREAK inc. This page is not affiliated with, sponsored by, or endorsed by them.</div>
-  </div>
-</footer>
 
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="overlay" id="overlay" hidden>
@@ -349,7 +341,7 @@ const TYPES = [
   ['ice','Ice','#62c6c6'],['dragon','Dragon','#7038f8'],['rock','Rock','#b8a038'],['ghost','Ghost','#705898']
 ];
 const TYPE = Object.fromEntries(TYPES.map(t => [t[0], t]));
-const DEFAULTS = { name:'Iris', age:'8', date:'2026-12-06', start:'15:15', end:'17:30', place:'Pump It Up Lake Forest', address:'26242 Dimension Dr, Lake Forest, CA 92630', host:'Angela Kim & Jaeho Lee', rsvpBy:'2026-11-29', message:"Iris is turning 8! \u26a1\nJoin us at Pump It Up for bouncing fun, followed by pizza, wings, and cake. Gotta bounce 'em all!", notes:"Don't forget socks! Please RSVP so we can plan for every trainer. Hope to see you there!" };
+const DEFAULTS = { name:'Iris', age:'8', date:'2026-12-06', start:'15:15', end:'17:30', place:'Pump It Up Lake Forest', address:'26242 Dimension Dr, Lake Forest, CA 92630', host:'Angela Kim & Jaeho Lee', rsvpBy:'2026-11-29', message:"Iris is turning 8! \u26a1\nJoin us at Pump It Up for bouncing fun, followed by pizza, wings, and cake. Gotta bounce 'em all!", notes:"Don't forget socks!" };
 let details = { ...DEFAULTS };
 const API = String((window.IRIS_CONFIG || {}).apiUrl || '').trim();
 let uid = null, isOwner = false, hostKey = '', me = null, loaded = false;
@@ -389,16 +381,8 @@ function renderDetails(){
   $('fAddr').textContent = d.place ? d.address : '';
   $('fHost').textContent = d.host || `${n}'s family`;
   $('fRsvpBy').textContent = d.rsvpBy ? 'Please RSVP by ' + fmtDate(d.rsvpBy, { weekday:'short', month:'short', day:'numeric' }) : '';
-  const rb = parseDate(d.rsvpBy), t0 = new Date(); t0.setHours(0,0,0,0);
-  const rbEl = $('rsvpBy2');
-  if (rb){
-    const past = rb < t0;
-    rbEl.className = past ? 'ok' : 'note';
-    rbEl.textContent = past ? 'The RSVP date has passed, but you can still reply or change your answer.'
-      : `Please reply by ${fmtDate(d.rsvpBy, { weekday:'long', month:'long', day:'numeric' })}. Late replies are still welcome.`;
-    rbEl.hidden = false;
-  } else rbEl.hidden = true;
-  $('fNotes').textContent = d.notes || 'Wear your favorite type colors. Party games, cake, and a few surprises.';
+  $('fNotes').textContent = [d.message || defaultMessage(), d.notes].filter(Boolean).join('\n');
+  $('rsvpSub').textContent = (d.rsvpBy ? 'Please reply by ' + fmtDate(d.rsvpBy, { weekday:'long', month:'long', day:'numeric' }) + '. ' : '') + 'Siblings are welcome.';
   document.querySelector('label[for=rNote], #rNote') && ($('rNote').placeholder = `Happy birthday, ${n}!`);
   $('rNote').closest('label').firstChild.nodeValue = `Message for ${n} (optional)`;
   if (!opened) $('dialogText').textContent = d.message || defaultMessage();
@@ -816,7 +800,6 @@ async function refresh(){
     $('rNote').value = str(m.note,200);
     form.status = ['yes','maybe','no'].includes(m.status) ? m.status : 'yes';
     syncForm(); updateSubmitLabel();
-    $('rsvpSub').textContent = 'Welcome back, trainer! Here is your RSVP. Change anything and update it.';
   }
   rosterOfflineText = 'No trainers yet. Be the first to RSVP!';
   renderDetails(); renderRoster();
