@@ -8,6 +8,7 @@
 <meta property="og:title" content="Iris's 8th Birthday Pokémon Party">
 <meta property="og:description" content="Sunday, December 6 · 3:15–5:30 PM · Pump It Up Lake Forest. Tap to RSVP!">
 <meta name="robots" content="noindex">
+<meta name="format-detection" content="telephone=no,address=no,date=no,email=no">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -397,7 +398,9 @@ function renderDetails(){
   $('fWhen').textContent = fmtDate(d.date) || 'Date coming soon';
   $('fTime').textContent = [fmtTime(d.start), fmtTime(d.end)].filter(Boolean).join(' – ');
   $('fPlace').textContent = d.place || (d.address ? d.address : 'Location coming soon');
-  $('fAddr').textContent = d.place ? d.address : '';
+  { const box = $('fAddr'); box.replaceChildren(); const addr = d.place ? d.address : '';
+    if (addr){ const a = el('a', null, addr); a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent([d.place, d.address].filter(Boolean).join(', '));
+      a.target = '_blank'; a.rel = 'noopener'; box.append(a); } }
   $('fHost').textContent = d.host || `${n}'s family`;
   $('fRsvpBy').textContent = d.rsvpBy ? 'Please RSVP by ' + fmtDate(d.rsvpBy, { weekday:'short', month:'short', day:'numeric' }) : '';
   $('fNotes').textContent = [d.message || defaultMessage(), d.notes].filter(Boolean).join('\n');
