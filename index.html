@@ -333,9 +333,9 @@ footer b{color:var(--yellow)}
   <section class="panel" aria-labelledby="rosterH">
     <h2 id="rosterH">Party roster</h2>
     <div class="tally">
-      <div><span class="pix">Going</span><b id="tGo">0</b><small id="tGoSub">0 grown-ups · 0 kids</small></div>
-      <div><span class="pix">Maybe</span><b id="tMaybe">0</b><small id="tMaybeSub">0 grown-ups · 0 kids</small></div>
-      <div><span class="pix">Can't go</span><b id="tNo">0</b><small id="tNoSub">replies</small></div>
+      <div><span class="pix">Going</span><b id="tGo">–</b><small id="tGoSub">0 grown-ups · 0 kids</small></div>
+      <div><span class="pix">Maybe</span><b id="tMaybe">–</b><small id="tMaybeSub">0 grown-ups · 0 kids</small></div>
+      <div><span class="pix">Can't go</span><b id="tNo">–</b><small id="tNoSub">replies</small></div>
     </div>
     <div id="roster"><div class="empty" id="rosterEmpty">Connecting to the guest list…</div></div>
   </section>
@@ -592,12 +592,17 @@ function renderRoster(){
     if (cnt[st]){ cnt[st].ad += int(r.adults,0,20); cnt[st].kd += int(r.kids,0,20); }
   }
   const sub = c => `${c.ad} grown-up${c.ad===1?'':'s'} · ${c.kd} kid${c.kd===1?'':'s'}`;
-  $('tGo').textContent = cnt.yes.ad + cnt.yes.kd;
-  $('tGoSub').textContent = sub(cnt.yes);
-  $('tMaybe').textContent = cnt.maybe.ad + cnt.maybe.kd;
-  $('tMaybeSub').textContent = sub(cnt.maybe);
-  $('tNo').textContent = groups.no.length;
-  $('tNoSub').textContent = groups.no.length === 1 ? 'reply' : 'replies';
+  if (!loaded && !rsvps.length){
+    ['tGo','tMaybe','tNo'].forEach(id => $(id).textContent = '–');
+    $('tGoSub').textContent = $('tMaybeSub').textContent = 'grown-ups · kids'; $('tNoSub').textContent = 'replies';
+  } else {
+    $('tGo').textContent = cnt.yes.ad + cnt.yes.kd;
+    $('tGoSub').textContent = sub(cnt.yes);
+    $('tMaybe').textContent = cnt.maybe.ad + cnt.maybe.kd;
+    $('tMaybeSub').textContent = sub(cnt.maybe);
+    $('tNo').textContent = groups.no.length;
+    $('tNoSub').textContent = groups.no.length === 1 ? 'reply' : 'replies';
+  }
 
   const root = $('roster'); root.replaceChildren();
   if (!rsvps.length){
