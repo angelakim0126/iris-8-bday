@@ -334,8 +334,8 @@ footer b{color:var(--yellow)}
     <h2 id="rosterH">Party roster</h2>
     <div class="tally">
       <div><span class="pix">Going</span><b id="tGo">0</b><small id="tGoSub">0 grown-ups · 0 kids</small></div>
-      <div><span class="pix">Maybe</span><b id="tMaybe">0</b><small>families</small></div>
-      <div><span class="pix">Can't go</span><b id="tNo">0</b><small>families</small></div>
+      <div><span class="pix">Maybe</span><b id="tMaybe">0</b><small id="tMaybeSub">0 grown-ups · 0 kids</small></div>
+      <div><span class="pix">Can't go</span><b id="tNo">0</b><small id="tNoSub">replies</small></div>
     </div>
     <div id="roster"><div class="empty" id="rosterEmpty">Connecting to the guest list…</div></div>
   </section>
@@ -584,16 +584,20 @@ function drawBall(x, cx, cy, r, top){
 /* ---------- roster ---------- */
 function renderRoster(){
   const groups = { yes:[], maybe:[], no:[] };
-  let ad = 0, kd = 0;
+  // headcounts (grown-ups + kids) per answer; "can't go" replies have no headcount, so those count replies
+  const cnt = { yes:{ad:0, kd:0}, maybe:{ad:0, kd:0} };
   for (const r of rsvps){
     const st = ['yes','maybe','no'].includes(r.status) ? r.status : 'maybe';
     groups[st].push(r);
-    if (st === 'yes'){ ad += int(r.adults,0,20); kd += int(r.kids,0,20); }
+    if (cnt[st]){ cnt[st].ad += int(r.adults,0,20); cnt[st].kd += int(r.kids,0,20); }
   }
-  $('tGo').textContent = groups.yes.length;
-  $('tGoSub').textContent = `${ad} grown-up${ad===1?'':'s'} · ${kd} kid${kd===1?'':'s'}`;
-  $('tMaybe').textContent = groups.maybe.length;
+  const sub = c => `${c.ad} grown-up${c.ad===1?'':'s'} · ${c.kd} kid${c.kd===1?'':'s'}`;
+  $('tGo').textContent = cnt.yes.ad + cnt.yes.kd;
+  $('tGoSub').textContent = sub(cnt.yes);
+  $('tMaybe').textContent = cnt.maybe.ad + cnt.maybe.kd;
+  $('tMaybeSub').textContent = sub(cnt.maybe);
   $('tNo').textContent = groups.no.length;
+  $('tNoSub').textContent = groups.no.length === 1 ? 'reply' : 'replies';
 
   const root = $('roster'); root.replaceChildren();
   if (!rsvps.length){
@@ -603,7 +607,8 @@ function renderRoster(){
   const titles = { yes:'Joining the party', maybe:'Maybe', no:"Can't make it" };
   for (const st of ['yes','maybe','no']){
     if (!groups[st].length) continue;
-    const g = el('div','group'); const h = el('h3', null, `${titles[st]} (${groups[st].length})`);
+    const people = cnt[st] ? cnt[st].ad + cnt[st].kd : 0;
+    const g = el('div','group'); const h = el('h3', null, cnt[st] ? `${titles[st]} (${people} ${people === 1 ? 'person' : 'people'})` : `${titles[st]} (${groups[st].length})`);
     const cards = el('div','cards');
     groups[st].sort((a,b) => str(b.updatedAt,40).localeCompare(str(a.updatedAt,40)));
     for (const r of groups[st]){
@@ -898,7 +903,10 @@ const store = {
 };
 async function call(body){
   // text/plain body keeps this a "simple" request, which Google Apps Script accepts cross-site
-  const r = await fetch(API, { method:'POST', body: JSON.stringify(body) });
+  const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 20000);
+  let r;
+  try { r = await fetch(API, { method:'POST', body: JSON.stringify(body), signal: ctl.signal }); }
+  finally { clearTimeout(tm); }
   if (!r.ok) throw Object.assign(new Error('http ' + r.status), { code:'http' });
   const j = await r.json();
   if (j && j.error) throw Object.assign(new Error(j.error), { code: j.error });
@@ -906,11 +914,15 @@ async function call(body){
 }
 async function refresh(){
   const j = await call({ action:'list' });
+  store.set('irisRoster', { details: j.details || {}, rsvps: j.rsvps || [] });
+  applyRoster(j, true);
+}
+function applyRoster(j, fresh){
   details = clean(j.details || {});
   rsvps = (Array.isArray(j.rsvps) ? j.rsvps : []).filter(r => r && typeof r.id === 'string');
   loaded = true;
-  if (me && !rsvps.some(r => r.id === me.id)){ me = null; uid = null; mine = null; store.del('irisRsvp'); updateSubmitLabel(); }
-  const m = me && rsvps.find(r => r.id === me.id);
+  if (fresh && me && !rsvps.some(r => r.id === me.id)){ me = null; uid = null; mine = null; store.del('irisRsvp'); updateSubmitLabel(); }
+  const m = fresh && me && rsvps.find(r => r.id === me.id);
   if (m && !mine){
     mine = m;
     $('rName').value = str(m.name,60); $('rAdults').value = int(m.adults,0,20); $('rKids').value = int(m.kids,0,20);
@@ -938,10 +950,20 @@ async function boot(){
     try { const c = await call({ action:'checkHost', key:hostKey }); isOwner = !!c.ok; } catch(e){ isOwner = false; }
     if (isOwner){ $('hostPanel').hidden = false; fillHostForm(); } else store.del('irisHost');
   }
-  const slow = setTimeout(() => { if (!loaded){ rosterOfflineText = "Can't reach the guest list right now. It will show up once the connection returns."; renderRoster(); } }, 10000);
-  try { await refresh(); } catch(e){ rosterOfflineText = "Can't reach the guest list right now. Try reloading in a minute."; renderRoster(); }
+  // show the roster from this device's last visit right away, then refresh it
+  const cached = store.get('irisRoster');
+  if (cached && Array.isArray(cached.rsvps)){ try { applyRoster(cached, false); loaded = false; } catch(e){} }
+  const slow = setTimeout(() => { if (!loaded && !cached){ rosterOfflineText = 'Still loading the guest list…'; renderRoster(); } }, 6000);
+  // Google's script can be slow to wake up: retry a few times before saying anything
+  for (const wait of [0, 1500, 4000, 8000]){
+    if (wait) await new Promise(r => setTimeout(r, wait));
+    try { await refresh(); break; } catch(e){}
+  }
   clearTimeout(slow);
-  setInterval(() => { if (!document.hidden) refresh().catch(() => {}); }, 30000);
+  if (!loaded && !cached){ rosterOfflineText = 'Still loading the guest list…'; renderRoster(); }
+  // keep it fresh: every 30 s once loaded, every 10 s until the first load succeeds
+  const poll = () => { if (!document.hidden) refresh().catch(() => {}); setTimeout(poll, loaded ? 30000 : 10000); };
+  setTimeout(poll, loaded ? 30000 : 10000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh().catch(() => {}); });
 }
 boot();
